@@ -87,7 +87,7 @@ def main():
     subprocess.call(["v.distance", '-a', 'from=studyarea', "to=airports@PERMANENT", "output=airport_distances", "upload=dist,to_attr", "column=airport_distance,airport", "from_type=centroid", "to_column=str_1", "table=airport_distances"])
 
     # Select and print airports that are within a 100 km radius (calculation of distance in meters)
-    nearbyAirports = gscript.read_command('v.db.select', map='airport_distances', columns='airport,airport_distance', where='airport_distance <= 100000')
+    nearbyAirports = gscript.read_command('v.db.select', map='airport_distances', columns='airport,airport_distance', where='airport_distance <= 50000')
     print("Nearby airports (<100km): \n" + nearbyAirports)
 
     # Export airport distances to file 
