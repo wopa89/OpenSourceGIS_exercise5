@@ -1,14 +1,33 @@
 #!/usr/bin/env python
+
+''' 
+This scripts derives some basic information about a specified city in New Zealand 
+
+You have to adapt the variable "path_data" to match your file path to the data 
+To change the city that you would like to get information about, change the 
+parameter 'where' of the 'v.extract' module
+
+Trouble shooting: 
+If you get the following error message:
+  "ERROR: option <output>: <studyarea> exists. To overwrite, use the --overwrite flag"
+Press the "activate overwrite" button in the menu bar of the GRASS GIS Simple Python Editor.
+
+If the process gets stuck inbetween, close and restart GRASS GIS and run the script again.
+
+The v.distance tool is a bit buggy on Windows. So if it doesn't work, execute 
+the module manually in the GRASS GIS console. Full command is given below. 
+
+'''
+
 
 import grass.script as gscript
 import subprocess
 import os
 
-
 def main():
 
     # Path to the folder containing that data sets
-    path_data = "/Users/chludwig/Development/git/OpenSourceGIS_exercise5/data/"
+    path_data = "//netfilec.ad.uni-heidelberg.de/home/n/nb152/git/OpenSourceGIS_exercise5/data"
 
     # 0. Adjust the region of the mapset to your city ---------------------------
 
@@ -57,7 +76,7 @@ def main():
     # add code here ....
 
 
-    # 4. Calculate total length of cycleways 
+    # 3. Calculate total length of cycleways 
     # ----------------------------------------
 
     # Import data set with cycleways 
@@ -78,14 +97,16 @@ def main():
     print("Total length of cycleways: " + cyclewaysStatistics.split("\n")[9] + " km")
 
 
-    # 3. Find the nearby airports 
+    # 4. Find the nearby airports 
     # ----------------------------
 
-    # Calculate distances to all airports (calculation of distance in meters)
-    # Not working --> gscript.run_command("v.distance", from="studyarea@Auckland", to="airports@PERMANENT", output="airport_distances", upload="dist,to_attr", column="airport,airport_distance", to_column="str_1", table="airport_distances", flags="a")
-    # gscript.run_command('v.distance') does not work in this case due to a bug. Therefore we use subprocess.call() instead
-    subprocess.call(["v.distance", '-a', 'from=studyarea', "to=airports@PERMANENT", "output=airport_distances", "upload=dist,to_attr", "column=airport_distance,airport", "from_type=centroid", "to_column=str_1", "table=airport_distances"])
-
+    # Calculate distances to all airports (in meters)
+    # gscript.run_command("v.distance", from="studyarea@vacation2", to="airports@PERMANENT", output="airport_distances", upload="dist,to_attr", column="airport,airport_distance", to_column="str_1", table="airport_distances", flags="a")
+    # the command above does not work due to a bug. Therefore we use subprocess.call() instead
+    subprocess.call(["v.distance", "-a", "from=studyarea", "to=airports@PERMANENT", "output=airport_distances", "upload=dist,to_attr", "column=airport_distance,airport", "from_type=centroid", "to_column=str_1", "table=airport_distances"])
+    # If the subprocess doesn't work either (likely on windows), execute the following command manually in the GRASS GIS console 
+    # v.distance -a from=studyarea to=airports@PERMANENT output=airport_distances upload=dist,to_attr column=airport_distance,airport from_type=centroid to_column=str_1 table=airport_distances
+
     # Select and print airports that are within a 100 km radius (calculation of distance in meters)
     nearbyAirports = gscript.read_command('v.db.select', map='airport_distances', columns='airport,airport_distance', where='airport_distance <= 50000')
     print("Nearby airports (<100km): \n" + nearbyAirports)
