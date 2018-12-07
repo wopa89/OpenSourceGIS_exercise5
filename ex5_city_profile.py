@@ -27,16 +27,16 @@ import os
 def main():
 
     # Path to the folder containing that data sets
-    path_data = "//netfilec.ad.uni-heidelberg.de/home/n/nb152/git/OpenSourceGIS_exercise5/data"
+    path_data = "H:/Studium/Master Geographie/1. Semester/FOSSGIS/Exercise05/OpenSourceGIS_exercise5/data"
 
     # 0. Adjust the region of the mapset to your city ---------------------------
 
     # Create new layer containting the selected district
-    gscript.run_command('v.extract', input='cities@PERMANENT', where="name='AK27'", output='studyarea')
+    gscript.run_command('v.extract', input='cities@PERMANENT', where="name='CH2'", output='studyarea')
     
     # Adjust GRASS GIS region to the study area
     gscript.run_command('g.region', vect='studyarea', align='rainfall@PERMANENT')
-
+'''
     # 1. Calculate average rainfall within the study area 
     # ----------------------------------------------------
     gscript.run_command('v.rast.stats', flags='c', map='studyarea', raster='rainfall@PERMANENT', column_prefix='rf', method='average,minimum')
@@ -114,7 +114,7 @@ def main():
     # Export airport distances to file 
     path_out_airportdistances = os.path.join(path_data, 'airport_distances.shp')
     gscript.run_command('v.out.ogr', input='airport_distances', output=path_out_airportdistances, format='ESRI_Shapefile')
-
+'''
 
 if __name__ == '__main__':
     main()
